@@ -168,7 +168,7 @@ class CosmicStandoff:
 
 ## License
 
-Distributed under the MIT License. See [`LICENSE.txt`](license-url) for details.
+Distributed under the MIT License. See [`LICENSE.txt`][license-url] for details.
 
 [back to top](#cosmic-standoff)
 
