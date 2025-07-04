@@ -1,0 +1,6 @@
+charset-normalizer==3.4.1
+docformatter==1.7.5
+PyInputPlus==0.2.12
+PySimpleValidate==0.2.12
+stdiomask==0.0.6
+untokenize==0.1.1
