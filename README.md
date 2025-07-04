@@ -74,11 +74,11 @@ Play as the Captain, facing off against a computer-controlled Alien. Each turn, 
 
 ```bash
 # Clone the repository
-git clone https://github.com/E-Rinaudo/cosmic_standoff.git # Using Git
-gh repo clone E-Rinaudo/cosmic_standoff # Using GitHub CLI
+git clone https://github.com/E-Rinaudo/cosmic-standoff.git # Using Git
+gh repo clone E-Rinaudo/cosmic-standoff # Using GitHub CLI
 
 # Create a virtual environment
-cd cosmic_standoff
+cd cosmic-standoff
 python -m venv venv
 
 # Activate the virtual environment (all platforms)
@@ -189,9 +189,9 @@ You can also explore my GitHub profile.
 **Happy coding!**
 
 <!-- SHIELDS -->
-[stars-shield]: https://img.shields.io/github/stars/E-Rinaudo/cosmic_standoff.svg?style=flat
+[stars-shield]: https://img.shields.io/github/stars/E-Rinaudo/cosmic-standoff.svg?style=flat
 [stars-url]: https://github.com/E-Rinaudo/cosmic-standoff/stargazers
-[license-shield]: https://img.shields.io/github/license/E-Rinaudo/cosmic_standoff.svg?style=flat
+[license-shield]: https://img.shields.io/github/license/E-Rinaudo/cosmic-standoff.svg?style=flat
 [license-url]: https://github.com/E-Rinaudo/cosmic-standoff/blob/main/LICENSE.txt
 [Gmail-shield]: https://img.shields.io/badge/Gmail-D14836?style=flat&logo=gmail&logoColor=white
 [Gmail-url]: mailto:enricorinaudo91@gmail.com
