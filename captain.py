@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+# region Module Docstring and Imports.
 """Defines the Captain class for the Cosmic Standoff game.
 
 The Captain class represents the player-controlled character and manages
@@ -22,17 +23,13 @@ if TYPE_CHECKING:
 
 
 # Aliases for the relevant Enums of constants.py.
-Paths = cons.Paths
 Chars = cons.Characters
-Turns = cons.Turns
 Moves = cons.Moves
+Turns = cons.Turns
 
-logging.basicConfig(
-    filename=Paths.LOG_PATH.value,
-    level=logging.DEBUG,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-)
-# logging.disable(logging.INFO)
+# endregion.
+
+# region Captain Class.
 
 
 class Captain:  # pylint: disable=too-few-public-methods
@@ -68,14 +65,14 @@ class Captain:  # pylint: disable=too-few-public-methods
 
     def _prompt_captain_move(self) -> None:
         """Prompts the player to choose a move and validates the input."""
-        move_options = [move.value for move in Moves]
+        move_options = [move for move in Moves]
         main_moves, no_move = ", ".join(move_options[:-1]), move_options[-1]
 
         self._print_captain_move_prompt(main_moves, no_move)
         self._get_captain_move(move_options, main_moves, no_move)
 
         # Captain is the last to move. Used to declare the winner if the distance is 0.
-        self.cs_game.turns[Turns.WHO_LAST] = Chars.CAP.value
+        self.cs_game.turns[Turns.WHO_LAST] = Chars.CAP
 
     def _print_captain_move_prompt(self, main_moves: str, no_move: str) -> None:
         """Displays the move options to the player.
@@ -128,3 +125,6 @@ class Captain:  # pylint: disable=too-few-public-methods
         else:
             print("Your new position:")
         self.cs_game.display_board()
+
+
+# endregion.

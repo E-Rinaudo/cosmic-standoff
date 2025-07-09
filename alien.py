@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+# region Module Docstring and Imports.
 """Defines the Alien class for the Cosmic Standoff game.
 
 The Alien class represents the computer-controlled character and defines
@@ -11,8 +12,6 @@ choosing aggressive or defensive tactics, depending on the situation.
 The class interacts with the main game instance to update the game state
 and log the current board status.
 """
-
-# TODO: Would be nice to come up with other alien movement patterns.
 
 from __future__ import annotations
 
@@ -27,24 +26,20 @@ if TYPE_CHECKING:
     from cosmic_standoff import CosmicStandoff
 
 # Aliases for the relevant Enums of constants.py.
-NCons = cons.NumericalConstants
-Paths = cons.Paths
-Chars = cons.Characters
-Coords = cons.Coordinates
-BConfig = cons.BoardConfig
-Dist = cons.Distance
-Turns = cons.Turns
-Moves = cons.Moves
-Flags = cons.Flags
 AlienMoves = cons.AlienMoves
 AlienMovesCond = cons.AlienMovesConditions
+BConfig = cons.BoardConfig
+Chars = cons.Characters
+Coords = cons.Coordinates
+Flags = cons.Flags
+Dist = cons.Distance
+Moves = cons.Moves
+NCons = cons.NumericalConstants
+Turns = cons.Turns
 
-logging.basicConfig(
-    filename=Paths.LOG_PATH.value,
-    level=logging.DEBUG,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-)
-# logging.disable(logging.INFO)
+# endregion.
+
+# region Alien Class.
 
 
 class Alien:  # pylint: disable=too-few-public-methods
@@ -85,7 +80,7 @@ class Alien:  # pylint: disable=too-few-public-methods
         determined by '_decide_move()'.
         """
         print("\nThe Alien is deciding its move.")
-        time.sleep(NCons.SHORT_PAUSE.value)
+        time.sleep(NCons.SHORT_PAUSE)
 
         selected_move = random.choice(self._decide_move())
         selected_move()
@@ -95,7 +90,7 @@ class Alien:  # pylint: disable=too-few-public-methods
         )
 
         # Alien is the last to move. Used to declare the winner if the distance is 0.
-        self.cs_game.turns[Turns.WHO_LAST] = Chars.ALIEN.value
+        self.cs_game.turns[Turns.WHO_LAST] = Chars.ALIEN
 
     def _decide_move(self) -> list[Callable[[], Any]]:
         """Determines the alien's move based on predefined conditions.
@@ -126,10 +121,10 @@ class Alien:  # pylint: disable=too-few-public-methods
         distances = self.cs_game.retrieve_distances()
 
         return {
-            AlienMovesCond.WIN_CONDITION: NCons.WIN_DIST.value in distances,
-            AlienMovesCond.CLOSE_TO_LOSE_CONDITION: NCons.LOSE_DIST.value in distances,
+            AlienMovesCond.WIN_CONDITION: NCons.WIN_DIST in distances,
+            AlienMovesCond.CLOSE_TO_LOSE_CONDITION: NCons.LOSE_DIST in distances,
             AlienMovesCond.AGGRESSIVE_FLEE_CONDITION: any(
-                NCons.LOSE_DIST.value < dist < self.cs_game.board_config[BConfig.START_DIST]
+                NCons.LOSE_DIST < dist < self.cs_game.board_config[BConfig.START_DIST]
                 for dist in distances
             ),
         }
@@ -162,7 +157,7 @@ class Alien:  # pylint: disable=too-few-public-methods
             A list of functions representing the Alien's selected move, based
                 on a bold or defensive strategy.
         """
-        if random.random() <= NCons.NOT_AFRAID_PROBABILITY.value:
+        if random.random() <= NCons.NOT_AFRAID_PROBABILITY:
             return alien_moves[AlienMoves.NOT_AFRAID_TO_LOSE]
         return alien_moves[AlienMoves.AFRAID_TO_LOSE]
 
@@ -172,9 +167,9 @@ class Alien:  # pylint: disable=too-few-public-methods
         If the Alien is exactly one unit away from the Captain, it moves
         toward the Captain to secure victory.
         """
-        if self.cs_game.distance[Dist.Y_DIST] == NCons.WIN_DIST.value:
+        if self.cs_game.distance[Dist.Y_DIST] == NCons.WIN_DIST:
             self._pursue_captain(Moves.DOWN, Moves.UP, Coords.Y_COORD)
-        elif self.cs_game.distance[Dist.X_DIST] == NCons.WIN_DIST.value:
+        elif self.cs_game.distance[Dist.X_DIST] == NCons.WIN_DIST:
             self._pursue_captain(Moves.LEFT, Moves.RIGHT, Coords.X_COORD)
 
     def _pursue_captain(self, move_neg: Moves, move_pos: Moves, coord: Coords) -> None:
@@ -189,32 +184,32 @@ class Alien:  # pylint: disable=too-few-public-methods
                 comparison.
         """
         self.cs_game.turns[Turns.ALIEN_MOVE] = (
-            move_neg.value
+            move_neg
             if self.cs_game.board[Chars.ALIEN][coord] > self.cs_game.board[Chars.CAP][coord]
-            else move_pos.value
+            else move_pos
         )
 
     def _freeze_move(self) -> None:
         """Sets the Alien's move to 'Moves.STILL', indicating no movement."""
-        self.cs_game.turns[Turns.ALIEN_MOVE] = Moves.STILL.value
+        self.cs_game.turns[Turns.ALIEN_MOVE] = Moves.STILL
 
     def _random(self) -> None:
         """Moves the Alien in a random direction."""
-        movements = [move.value for move in Moves]
+        movements = [move for move in Moves]
         self.cs_game.turns[Turns.ALIEN_MOVE] = random.choice(movements)
 
     def _attack(self) -> None:
         """Moves the Alien in direct response to the Captain's movement."""
         match self.cs_game.turns[Turns.CAP_MOVE]:
-            case Moves.UP.value:
-                self.cs_game.turns[Turns.ALIEN_MOVE] = Moves.DOWN.value
-            case Moves.DOWN.value:
-                self.cs_game.turns[Turns.ALIEN_MOVE] = Moves.UP.value
-            case Moves.LEFT.value:
-                self.cs_game.turns[Turns.ALIEN_MOVE] = Moves.RIGHT.value
-            case Moves.RIGHT.value:
-                self.cs_game.turns[Turns.ALIEN_MOVE] = Moves.LEFT.value
-            case Moves.STILL.value:
+            case Moves.UP:
+                self.cs_game.turns[Turns.ALIEN_MOVE] = Moves.DOWN
+            case Moves.DOWN:
+                self.cs_game.turns[Turns.ALIEN_MOVE] = Moves.UP
+            case Moves.LEFT:
+                self.cs_game.turns[Turns.ALIEN_MOVE] = Moves.RIGHT
+            case Moves.RIGHT:
+                self.cs_game.turns[Turns.ALIEN_MOVE] = Moves.LEFT
+            case Moves.STILL:
                 self._random()
             case _:
                 logging.warning(
@@ -243,7 +238,7 @@ class Alien:  # pylint: disable=too-few-public-methods
     def _flee(self) -> None:
         """Moves the Alien away from the Captain."""
         cap_move = self.cs_game.turns[Turns.CAP_MOVE]
-        if cap_move != Moves.STILL.value:
+        if cap_move != Moves.STILL:
             self.cs_game.turns[Turns.ALIEN_MOVE] = cap_move
         else:
             self._random()
@@ -252,7 +247,7 @@ class Alien:  # pylint: disable=too-few-public-methods
         """Displays the Alien new positions to the player."""
         alien_move = self.cs_game.turns[Turns.ALIEN_MOVE]
 
-        if alien_move == Moves.STILL.value:
+        if alien_move == Moves.STILL:
             print(f"\nAlien stayed '{alien_move}'.")
             print("The positions did not change, Captain:")
         else:
@@ -260,3 +255,6 @@ class Alien:  # pylint: disable=too-few-public-methods
             print("Here are the updated positions, Captain:")
 
         self.cs_game.display_board()
+
+
+# endregion.

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# region Module Docstring and Imports.
+
 """COSMIC STANDOFF - Terminal-Based Strategy Game
 =====================================================================
 
@@ -26,31 +28,32 @@ from typing import Literal, cast
 
 import pyinputplus as pyip  # type: ignore  # pylint: disable=import-error
 
+import logging_file
 import constants as cons
 from alien import Alien
 from captain import Captain
 
 # Aliases for all the Enums of constants.py.
-NCons = cons.NumericalConstants
-Paths = cons.Paths
-Chars = cons.Characters
-Coords = cons.Coordinates
-BConfig = cons.BoardConfig
-Dist = cons.Distance
-Turns = cons.Turns
-Moves = cons.Moves
-Flags = cons.Flags
 AlienMoves = cons.AlienMoves
 AlienMovesCond = cons.AlienMovesConditions
+BConfig = cons.BoardConfig
+Chars = cons.Characters
+Coords = cons.Coordinates
+Dist = cons.Distance
+Flags = cons.Flags
+Moves = cons.Moves
+NCons = cons.NumericalConstants
+Paths = cons.Paths
+Turns = cons.Turns
 
-logging.basicConfig(
-    filename=Paths.LOG_PATH.value,
-    level=logging.DEBUG,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-)
-logging.disable(logging.INFO)
+logging_file.logging_configuration()
+# logging_file.disable_logging()
 
 
+# endregion.
+
+
+# region CosmicStandoff Class.
 class CosmicStandoff:
     """Manages the setup and execution of a terminal turn-based game.
 
@@ -78,19 +81,22 @@ class CosmicStandoff:
     def __init__(self) -> None:
         """Initializes the game attributes."""
         self.board = {
-            character: {coord: NCons.START_VAL.value for coord in Coords} for character in Chars
+            character: {coord: NCons.START_VAL for coord in Coords} for character in Chars
         }
-        self.board_config = {config: NCons.START_VAL.value for config in BConfig}
-        self.distance = {distance: NCons.START_VAL.value for distance in Dist}
+        self.board_config = {config: NCons.START_VAL for config in BConfig}
+        self.distance = {distance: NCons.START_VAL for distance in Dist}
         self.turns = {turn_data: cons.EMPTY_STRING for turn_data in Turns}
         self.flags = {flag: False for flag in Flags}
-        self.score = {character.value: NCons.START_VAL.value for character in Chars}
+        self.score = {character: NCons.START_VAL for character in Chars}
         self.instances = {Chars.CAP: Captain(self), Chars.ALIEN: Alien(self)}
 
     def intro(self) -> None:
         """Displays the introduction to the game."""
-        logging.debug("Starting the game.")
-        print(input(cons.INTRO))
+        try:
+            logging.debug("Starting the game.")
+            print(input(cons.INTRO))
+        except KeyboardInterrupt:
+            self._exit_game()
 
     def main(self) -> None:
         """Manages the game's lifecycle.
@@ -125,7 +131,7 @@ class CosmicStandoff:
     def _read_score(self) -> None:
         """Reads the score in the JSON file and displays it to the player."""
         try:
-            victories = self._load_score_from_file(Paths.SCORE_PATH.value)
+            victories = self._load_score_from_file(Paths.SCORE_PATH)
         except (FileNotFoundError, json.JSONDecodeError) as err:
             logging.warning("Score file issue (%s). Initializing a new score.", err)
             self._write_score()
@@ -167,15 +173,15 @@ class CosmicStandoff:
         for character in self.board:
             # Loads existing score from JSON to ensure continuity, as self.score
             # resets after each game to prevent accumulation.
-            self.score[character.value] += victories[character.value]
-            print(f"-- {character.value}: {victories[character.value]}")
+            self.score[character] += victories[character]
+            print(f"-- {character}: {victories[character]}")
 
     def _write_score(self) -> None:
         """Keeps track of the score in a JSON file."""
         # Creates the directory only when the program runs for the first time.
-        os.makedirs(os.path.dirname(Paths.SCORE_PATH.value), exist_ok=True)
+        os.makedirs(os.path.dirname(Paths.SCORE_PATH), exist_ok=True)
 
-        with open(Paths.SCORE_PATH.value, "w", encoding="utf-8") as score_file:
+        with open(Paths.SCORE_PATH, "w", encoding="utf-8") as score_file:
             victories = json.dumps(self.score)
             score_file.write(victories)
             logging.info("The score has been written to file.")
@@ -212,10 +218,10 @@ class CosmicStandoff:
                 f"""
         How large should the board be at the start of the game?
 
-        Provide the minimum and maximum coordinates, at least {NCons.MIN_BOARD.value} units apart.
+        Provide the minimum and maximum coordinates, at least {NCons.MIN_BOARD} units apart.
 
         Example:
-        ({NCons.MIN_COORD_EX.value}, {NCons.MAX_COORD_EX.value}) spans {NCons.SPAN.value} units.
+        ({NCons.MIN_COORD_EX}, {NCons.MAX_COORD_EX}) spans {NCons.SPAN} units.
 
         Note: A larger difference between the coordinates may increase game duration.
         """
@@ -229,18 +235,18 @@ class CosmicStandoff:
         coordinates for the game board until the difference between them
         is at least 10 units, ensuring a playable board size.
         """
-        while self.board_config[BConfig.BOARD_SIZE] < NCons.MIN_BOARD.value:
+        while self.board_config[BConfig.BOARD_SIZE] < NCons.MIN_BOARD:
             self.board_config[BConfig.MIN_COORD] = pyip.inputInt("Minimum Coordinate: ")
             self.board_config[BConfig.MAX_COORD] = pyip.inputInt("Maximum Coordinate: ")
 
             # Recalculates the board size.
             self.board_config[BConfig.BOARD_SIZE] = (
                 self.board_config[BConfig.MAX_COORD] - self.board_config[BConfig.MIN_COORD]
-            ) + NCons.UNIT_INC.value
+            ) + NCons.UNIT_INC
 
-            if self.board_config[BConfig.BOARD_SIZE] < NCons.MIN_BOARD.value:
-                print(f"The board size must be at least {NCons.MIN_BOARD.value} units apart.\n")
-                print(f"You chose a board of {self.board_config[BConfig.BOARD_SIZE]} units.")
+            if self.board_config[BConfig.BOARD_SIZE] < NCons.MIN_BOARD:
+                print(f"The board size must be at least {NCons.MIN_BOARD} units apart.\n")
+                print(f"You chose a board of {self.board_config[BConfig.BOARD_SIZE]} units.\n")
 
     def _set_starting_distance(self) -> None:
         """Calculates and sets the starting distance as half the board size.
@@ -249,9 +255,7 @@ class CosmicStandoff:
         sufficient for meaningful gameplay, given the minimum board size
         of 10 units.
         """
-        self.board_config[BConfig.START_DIST] = (
-            self.board_config[BConfig.BOARD_SIZE] // NCons.HALF.value
-        )
+        self.board_config[BConfig.START_DIST] = self.board_config[BConfig.BOARD_SIZE] // NCons.HALF
 
     def _place_characters_on_board(self) -> None:
         """Fills the board with the Captain and Alien positions."""
@@ -345,9 +349,9 @@ class CosmicStandoff:
         set to True so the turn-based loop can start.
         """
         self._display_first_turn_intro()
-        time.sleep(NCons.LONG_PAUSE.value)
+        time.sleep(NCons.LONG_PAUSE)
 
-        starter = random.choice([char.value for char in Chars])
+        starter = random.choice([char for char in Chars])
         print(f"The {starter} goes first.")
         logging.info("Starter: %s.", starter)
 
@@ -379,8 +383,8 @@ class CosmicStandoff:
         """Displays the board coordinates on the screen."""
         print()
         for character, coordinates in self.board.items():
-            print(f"-- {character.value} {Coords.X_COORD.value}: {coordinates[Coords.X_COORD]}")
-            print(f"-- {character.value} {Coords.Y_COORD.value}: {coordinates[Coords.Y_COORD]}")
+            print(f"-- {character} {Coords.X_COORD}: {coordinates[Coords.X_COORD]}")
+            print(f"-- {character} {Coords.Y_COORD}: {coordinates[Coords.Y_COORD]}")
 
     def _start_turns(self) -> bool:
         """Checks if the turns sequence should start.
@@ -396,10 +400,10 @@ class CosmicStandoff:
         The order of turns is determined based on who is the starter.
         """
         match self.turns[Turns.WHO_STARTS]:
-            case Chars.CAP.value:
+            case Chars.CAP:
                 cast(Captain, self.instances[Chars.CAP]).captain_turn()
                 cast(Alien, self.instances[Chars.ALIEN]).alien_turn()
-            case Chars.ALIEN.value:
+            case Chars.ALIEN:
                 cast(Alien, self.instances[Chars.ALIEN]).alien_turn()
                 cast(Captain, self.instances[Chars.CAP]).captain_turn()
             case _:
@@ -417,18 +421,18 @@ class CosmicStandoff:
                 ('Chars.CAP' or 'Chars.ALIEN').
         """
         match self.turns[move]:
-            case Moves.UP.value:
-                self.board[character][Coords.Y_COORD] += NCons.UNIT_INC.value
-            case Moves.DOWN.value:
-                self.board[character][Coords.Y_COORD] -= NCons.UNIT_DEC.value
-            case Moves.LEFT.value:
-                self.board[character][Coords.X_COORD] -= NCons.UNIT_DEC.value
-            case Moves.RIGHT.value:
-                self.board[character][Coords.X_COORD] += NCons.UNIT_INC.value
-            case Moves.STILL.value:
+            case Moves.UP:
+                self.board[character][Coords.Y_COORD] += NCons.UNIT_INC
+            case Moves.DOWN:
+                self.board[character][Coords.Y_COORD] -= NCons.UNIT_DEC
+            case Moves.LEFT:
+                self.board[character][Coords.X_COORD] -= NCons.UNIT_DEC
+            case Moves.RIGHT:
+                self.board[character][Coords.X_COORD] += NCons.UNIT_INC
+            case Moves.STILL:
                 pass  # No movement. Intentional no op for clarity.
             case _:
-                logging.warning("Unexpected move: %s by %s.", self.turns[move], character.value)
+                logging.warning("Unexpected move: %s by %s.", self.turns[move], character)
 
     def is_turn_possible(self) -> bool:
         """Determines if a turn is possible for the Captain or Alien.
@@ -440,7 +444,7 @@ class CosmicStandoff:
             True if both distances are greater than 0, False otherwise.
         """
         distances = self.retrieve_distances()
-        return all(dist > NCons.ZERO_DIST.value for dist in distances)
+        return all(dist > NCons.ZERO_DIST for dist in distances)
 
     def _is_game_over(self) -> bool:
         """Checks if the game is over.
@@ -452,7 +456,7 @@ class CosmicStandoff:
             True if either distance is 0, False otherwise.
         """
         distances = self.retrieve_distances()
-        return NCons.ZERO_DIST.value in distances
+        return NCons.ZERO_DIST in distances
 
     def _end_game_sequence(self) -> None:
         """Handles the game's end by determining the winner.
@@ -474,29 +478,29 @@ class CosmicStandoff:
         character = self.turns[Turns.WHO_LAST]
 
         match character:
-            case Chars.CAP.value:
+            case Chars.CAP:
                 self._captain_won()
-            case Chars.ALIEN.value:
+            case Chars.ALIEN:
                 self._alien_won()
             case _:
                 logging.warning("Unexpected winner: %s.", character)
 
         # Updates the score for the winner.
-        self.score[character] += NCons.UNIT_INC.value
+        self.score[character] += NCons.UNIT_INC
 
     def _captain_won(self) -> None:
         """Displays a victory message for the Captain."""
         print("\nAlien at sight, Captain. Prepare to engage.")
         input("Press ENTER to shoot! ")
         print("\nBOOM! Direct hit, Captain!")
-        time.sleep(NCons.SHORT_PAUSE.value)
+        time.sleep(NCons.SHORT_PAUSE)
         print("\nCongratulations Captain, you destroyed the alien and saved your species.")
         print("The galaxy is safe once again.")
 
     def _alien_won(self) -> None:
         """Displays messages indicating that the Alien has won the game."""
         print("\nThe Alien has reached you, Captain. It's getting ready to shoot.")
-        time.sleep(NCons.SHORT_PAUSE.value)
+        time.sleep(NCons.SHORT_PAUSE)
         print("\nYou have lost the battle, Captain.")
         print("The invasion continues. Our fate is uncertain.")
 
@@ -517,22 +521,24 @@ class CosmicStandoff:
 
     def _reset_state(self) -> None:
         """Resets necessary flags and attributes to start a new game."""
-        self.board_config[BConfig.BOARD_SIZE] = NCons.RESET_VAL.value
-        self.distance[Dist.X_DIST] = NCons.RESET_VAL.value
-        self.distance[Dist.Y_DIST] = NCons.RESET_VAL.value
+        self.board_config[BConfig.BOARD_SIZE] = NCons.RESET_VAL
+        self.distance[Dist.X_DIST] = NCons.RESET_VAL
+        self.distance[Dist.Y_DIST] = NCons.RESET_VAL
         self.flags[Flags.START_TURNS] = False
         self.flags[Flags.NEW_GAME] = False
-        self.score[Chars.CAP.value] = NCons.RESET_VAL.value
-        self.score[Chars.ALIEN.value] = NCons.RESET_VAL.value
+        self.score[Chars.CAP] = NCons.RESET_VAL
+        self.score[Chars.ALIEN] = NCons.RESET_VAL
 
     def _exit_game(self) -> None:
         """Exits the game, logging and printing a quit message."""
         exit_message = "Exiting the game..."
         logging.debug(exit_message)
         print(f"\n{exit_message}")
-        time.sleep(NCons.SHORT_PAUSE.value)
+        time.sleep(NCons.SHORT_PAUSE)
         sys.exit()
 
+
+# endregion.
 
 if __name__ == "__main__":
     cosmic_standoff = CosmicStandoff()

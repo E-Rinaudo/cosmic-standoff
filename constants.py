@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# region Module Docstring and Imports.
+
 """Constants and configuration values for the Cosmic Standoff program.
 
 This module stores fixed values to avoid hardcoding them throughout the
@@ -7,7 +9,11 @@ project.
 """
 
 import os
-from enum import Enum
+from enum import Enum, IntEnum, StrEnum
+
+# endregion.
+
+# region Constants.
 
 INTRO: str = """
                             ***Cosmic Standoff***
@@ -35,8 +41,8 @@ How to Win:
 EMPTY_STRING = ""
 
 
-class NumericalConstants(Enum):
-    """Enum class defining labels for the numerical values used in the game.
+class NumericalConstants(IntEnum):
+    """Enum defining labels for the numerical values used in the game.
 
     Attributes:
         MIN_BOARD (int): Min board size to ensure enough moves before game ends.
@@ -74,20 +80,22 @@ class NumericalConstants(Enum):
     NOT_AFRAID_PROBABILITY = 0.2
 
 
-class Paths(Enum):
-    """Enum class defining labels for the paths used in the game.
+class Paths(StrEnum):
+    """Enum defining labels for the paths used in the game.
 
     Attributes:
         SCORE_PATH (str): The path to the score file.
         LOG_PATH (str): The path to the logging file.
     """
 
-    SCORE_PATH = os.path.join(os.getcwd(), "c_standoff_score/score.json")
-    LOG_PATH = os.path.join(os.getcwd(), "log_file.txt")
+    SCORE_PATH = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "c_standoff_score/score.json"
+    )
+    LOG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "log_file.txt")
 
 
-class Characters(Enum):
-    """Enum class defining labels for the characters of the game.
+class Characters(StrEnum):
+    """Enum defining labels for the characters of the game.
 
     Attributes:
         CAP (str): The Captain character.
@@ -98,8 +106,8 @@ class Characters(Enum):
     ALIEN = "Alien"
 
 
-class Coordinates(Enum):
-    """Enum class defining labels for the coordinate values of the board.
+class Coordinates(StrEnum):
+    """Enum defining labels for the coordinate values of the board.
 
     Attributes:
         X (str): Label for the X coordinate.
@@ -110,8 +118,8 @@ class Coordinates(Enum):
     Y_COORD = "Y"
 
 
-class BoardConfig(Enum):
-    """Enum class defining labels for the board initial configuration settings.
+class BoardConfig(StrEnum):
+    """Enum defining labels for the board initial configuration settings.
 
     Attributes:
         MIN_COORD (str): Label for the minimum coordinate for placing characters.
@@ -126,8 +134,8 @@ class BoardConfig(Enum):
     START_DIST = "start_distance"
 
 
-class Distance(Enum):
-    """Enum class defining labels for the distances between the characters.
+class Distance(StrEnum):
+    """Enum defining labels for the distances between the characters.
 
     Attributes:
         X_DIST (str): Label for the dynamic distance on the x axis.
@@ -138,8 +146,8 @@ class Distance(Enum):
     Y_DIST = "y_distance"
 
 
-class Turns(Enum):
-    """Enum class defining labels for the turns-related data used in the game.
+class Turns(StrEnum):
+    """Enum defining labels for the turns-related data used in the game.
 
     Attributes:
         WHO_STARTS (str): Label for who makes the first move (randomly decided).
@@ -155,8 +163,8 @@ class Turns(Enum):
     ALIEN_MOVE = "alien_move"
 
 
-class Moves(Enum):
-    """Enum class defining labels for the moves the Captain and Alien can make.
+class Moves(StrEnum):
+    """Enum defining labels for the moves the Captain and Alien can make.
 
     Attributes:
         UP (str): Up move.
@@ -173,8 +181,8 @@ class Moves(Enum):
     STILL = "Still"
 
 
-class Flags(Enum):
-    """Enum class defining labels for the game logic flags used in the game.
+class Flags(StrEnum):
+    """Enum defining labels for the game logic flags used in the game.
 
     Attributes:
         START_TURNS (str): Label for the flag to control the turn-based loop.
@@ -185,8 +193,8 @@ class Flags(Enum):
     NEW_GAME = "new_play"
 
 
-class AlienMoves(Enum):
-    """Enum class defining labels for the Alien's movement strategies.
+class AlienMoves(StrEnum):
+    """Enum defining labels for the Alien's movement strategies.
 
     Attributes:
         RANDOM (str): Label for a strategy where the Alien moves randomly.
@@ -207,8 +215,8 @@ class AlienMoves(Enum):
     CLOSE_TO_WIN = "close_to_win"
 
 
-class AlienMovesConditions(Enum):
-    """Enum class defining labels for conditions to pick the Alien's strategy.
+class AlienMovesConditions(StrEnum):
+    """Enum defining labels for conditions to pick the Alien's strategy.
 
     Attributes:
         WIN_CONDITION (str): Label for the condition when the Alien is close to
@@ -222,3 +230,6 @@ class AlienMovesConditions(Enum):
     WIN_CONDITION = "win_condition"
     CLOSE_TO_LOSE_CONDITION = "lose_condition"
     AGGRESSIVE_FLEE_CONDITION = "aggressive_flee_condition"
+
+
+# endregion.
