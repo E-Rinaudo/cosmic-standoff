@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 # region Module Docstring and Imports.
-
 """COSMIC STANDOFF - Terminal-Based Strategy Game
 =====================================================================
 
@@ -28,8 +27,8 @@ from typing import Literal, cast
 
 import pyinputplus as pyip  # type: ignore  # pylint: disable=import-error
 
-import logging_file
 import constants as cons
+import logging_file
 from alien import Alien
 from captain import Captain
 
@@ -351,7 +350,7 @@ class CosmicStandoff:
         self._display_first_turn_intro()
         time.sleep(NCons.LONG_PAUSE)
 
-        starter = random.choice([char for char in Chars])
+        starter = random.choice(list(Chars))
         print(f"The {starter} goes first.")
         logging.info("Starter: %s.", starter)
 

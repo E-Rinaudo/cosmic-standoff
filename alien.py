@@ -26,8 +26,8 @@ if TYPE_CHECKING:
     from cosmic_standoff import CosmicStandoff
 
 # Aliases for the relevant Enums of constants.py.
-AlienMoves = cons.AlienMoves
 AlienMovesCond = cons.AlienMovesConditions
+AlienMoves = cons.AlienMoves
 BConfig = cons.BoardConfig
 Chars = cons.Characters
 Coords = cons.Coordinates
@@ -195,7 +195,7 @@ class Alien:  # pylint: disable=too-few-public-methods
 
     def _random(self) -> None:
         """Moves the Alien in a random direction."""
-        movements = [move for move in Moves]
+        movements = list(Moves)
         self.cs_game.turns[Turns.ALIEN_MOVE] = random.choice(movements)
 
     def _attack(self) -> None:

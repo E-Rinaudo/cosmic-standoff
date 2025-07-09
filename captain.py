@@ -65,7 +65,7 @@ class Captain:  # pylint: disable=too-few-public-methods
 
     def _prompt_captain_move(self) -> None:
         """Prompts the player to choose a move and validates the input."""
-        move_options = [move for move in Moves]
+        move_options = list(Moves)
         main_moves, no_move = ", ".join(move_options[:-1]), move_options[-1]
 
         self._print_captain_move_prompt(main_moves, no_move)
@@ -91,7 +91,7 @@ class Captain:  # pylint: disable=too-few-public-methods
             end="",
         )
 
-    def _get_captain_move(self, move_options: list[str], main_moves: str, no_move: str) -> None:
+    def _get_captain_move(self, move_options: list[Moves], main_moves: str, no_move: str) -> None:
         """Gets and validates the player's move input.
 
         Args:

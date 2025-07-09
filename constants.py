@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 # region Module Docstring and Imports.
-
 """Constants and configuration values for the Cosmic Standoff program.
 
 This module stores fixed values to avoid hardcoding them throughout the
@@ -9,7 +8,7 @@ project.
 """
 
 import os
-from enum import Enum, IntEnum, StrEnum
+from enum import IntEnum, StrEnum
 
 # endregion.
 
