@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 # region Module Docstring and Imports.
-"""COSMIC STANDOFF - Terminal-Based Strategy Game
+"""COSMIC STANDOFF - Terminal-Based Strategy Game.
+
 =====================================================================
 
 A terminal-based game where the player and an Alien face off on a board.
