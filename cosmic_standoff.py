@@ -535,7 +535,7 @@ class CosmicStandoff:
         logging.debug(exit_message)
         print(f"\n{exit_message}")
         time.sleep(NCons.SHORT_PAUSE)
-        sys.exit()
+        sys.exit(0)
 
 
 # endregion.
