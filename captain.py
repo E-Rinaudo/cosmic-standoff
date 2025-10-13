@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # region Module Docstring and Imports.
 """Defines the Captain class for the Cosmic Standoff game.
 

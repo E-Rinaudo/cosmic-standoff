@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # region Module Docstring and Imports.
 """Constants and configuration values for the Cosmic Standoff program.
 
