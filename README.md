@@ -2,7 +2,7 @@
 
 [![Stargazers][stars-shield]][stars-url]
 [![MIT License][license-shield]][license-url]
-[![Gmail][Gmail-shield]][Gmail-url]
+[![ProtonMail][ProtonMail-shield]][ProtonMail-url]
 
 **Cosmic Standoff** is a terminal-based, turn-based strategy game written in Python.
 The goal is to outmaneuver the Alien on a customizable board and reach its position before it reaches yours.
@@ -193,8 +193,8 @@ You can also explore my GitHub profile.
 [stars-url]: https://github.com/E-Rinaudo/cosmic-standoff/stargazers
 [license-shield]: https://img.shields.io/github/license/E-Rinaudo/cosmic-standoff.svg?style=flat
 [license-url]: https://github.com/E-Rinaudo/cosmic-standoff/blob/main/LICENSE.txt
-[Gmail-shield]: https://img.shields.io/badge/Gmail-D14836?style=flat&logo=gmail&logoColor=white
-[Gmail-url]: mailto:erinaudo.gh@w.ernode.com
+[ProtonMail-shield]: https://img.shields.io/badge/Proton%20Mail-6D4AFF?logo=protonmail&logoColor=fff
+[ProtonMail-url]: mailto:erinaudo.gh@w.ernode.com
 
 <!-- BADGES -->
 [Python-badge]: https://img.shields.io/badge/python-3670A0?logo=python&logoColor=ffdd54&style=flat
