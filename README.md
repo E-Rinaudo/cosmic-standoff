@@ -176,7 +176,7 @@ Distributed under the MIT License. See [`LICENSE.txt`][license-url] for details.
 
 If you have any questions, feedback, or just want to get in touch, feel free to reach out to me via email. Your feedback is appreciated as it helps me to continue improving.
 
-- Email: <erinaudo.gh@w.ernode.com>  
+- Email: [erinaudo.gh@w.ernode.com](mailto:erinaudo.gh@w.ernode.com)
 
 You can also explore my GitHub profile.
 
